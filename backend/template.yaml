@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: HealthLens - Medical Report Intelligence Backend (Lambda, DynamoDB, S3, Bedrock)
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 1024
+    Runtime: nodejs20.x
+    Environment:
+      Variables:
+        S3_BUCKET_NAME: !Ref ReportsBucket
+        DYNAMODB_REPORTS_TABLE: !Ref ReportsTable
+        DYNAMODB_MEASUREMENTS_TABLE: !Ref MeasurementsTable
+        BEDROCK_MODEL_ID: anthropic.claude-3-haiku-20240307-v1:0
+        AWS_MODE: live
+
+Resources:
+  # 1. S3 Bucket for Medical Reports
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub healthlens-reports-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST]
+            AllowedOrigins: ['*']
+
+  # 2. DynamoDB Reports Table
+  ReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HealthLensReports
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ReportIdIndex
+          KeySchema:
+            - AttributeName: id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # 3. DynamoDB Measurements Table
+  MeasurementsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HealthLensMeasurements
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: reportId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: reportId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: UserBiomarkerIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: name
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  # 4. Lambda Function
+  HealthLensFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./dist
+      Handler: lambda.handler
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref ReportsBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ReportsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MeasurementsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: '*'
+      Events:
+        ApiRoot:
+          Type: Api
+          Properties:
+            Path: /api/{proxy+}
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/"
+  ReportsBucketName:
+    Description: S3 Bucket for medical documents
+    Value: !Ref ReportsBucket
