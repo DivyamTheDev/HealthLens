@@ -273,17 +273,7 @@ Example endpoints include:
 
 API Gateway routes requests to the appropriate Lambda backend logic.
 
----
-
-## 🔐 Security
-
-HealthLens follows several basic security practices:
-- AWS credentials are never exposed in the frontend.
-- AWS credentials are not committed to Git.
-- Secrets and environment files are excluded using `.gitignore`.
-- Lambda accesses AWS services through IAM execution permissions.
-- The frontend only requires the public API endpoint.
-- Demo data is synthetic and should not contain real personal medical information.
+--
 
 ---
 
