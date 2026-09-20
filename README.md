@@ -1,5 +1,9 @@
 # HealthLens 🩺
-Your health history, understood over time.
+### *Your health history, understood over time.*
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Amplify%20Hosting-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://main.d1sg7hnevaweuu.amplifyapp.com/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DivyamTheDev/HealthLens)
+[![AWS Powered](https://img.shields.io/badge/AWS-Serverless-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
 
 HealthLens is an AWS-powered health report intelligence platform that turns scattered medical reports into an understandable personal health timeline.
 
@@ -11,8 +15,10 @@ Instead of manually comparing multiple reports, HealthLens extracts recorded mea
 
 ## 🚀 Live Demo
 
-- **Live Application**: [https://main.d1sg7hnevaweuu.amplifyapp.com/](https://main.d1sg7hnevaweuu.amplifyapp.com/)
-- **GitHub Repository**: [https://github.com/DivyamTheDev/HealthLens](https://github.com/DivyamTheDev/HealthLens)
+* **Live Application URL**: [https://main.d1sg7hnevaweuu.amplifyapp.com/](https://main.d1sg7hnevaweuu.amplifyapp.com/)
+* **GitHub Repository**: [https://github.com/DivyamTheDev/HealthLens](https://github.com/DivyamTheDev/HealthLens)
+
+👉 **Experience the live deployed application**: **[https://main.d1sg7hnevaweuu.amplifyapp.com/](https://main.d1sg7hnevaweuu.amplifyapp.com/)**
 
 ---
 
@@ -21,10 +27,10 @@ Instead of manually comparing multiple reports, HealthLens extracts recorded mea
 Medical reports often contain useful information, but the information is scattered across PDFs and documents.
 
 When someone has multiple reports over months or years, answering simple questions such as:
-- What changed between my reports?
-- How has a particular measurement changed over time?
-- What values were recorded previously?
-- Can I quickly understand the information in my reports?
+- **What changed between my reports?**
+- **How has a particular measurement changed over time?**
+- **What values were recorded previously?**
+- **Can I quickly understand the information in my reports?**
 
 usually requires manually opening and comparing multiple documents.
 
@@ -36,9 +42,24 @@ HealthLens aims to make that process simpler.
 
 HealthLens creates a structured view of a user's health records.
 
-### Core Workflow
+### Core workflow
+
 ```
-Upload Report → Store Original Document → Extract Structured Measurements → Store Structured Data → View Report → Compare Reports → Track Measurements Over Time → Generate Plain-Language Summary
+Upload Report
+      ↓
+Store Original Document
+      ↓
+Extract Structured Measurements
+      ↓
+Store Structured Data
+      ↓
+View Report
+      ↓
+Compare Reports
+      ↓
+Track Measurements Over Time
+      ↓
+Generate Plain-Language Summary
 ```
 
 The system focuses on organizing and explaining recorded information rather than making medical diagnoses.
@@ -221,7 +242,7 @@ HealthLens/
 │   │   ├── services/
 │   │   │   ├── s3Service.ts
 │   │   │   ├── dynamoService.ts
-│   │   └── bedrockService.ts
+│   │   │   └── bedrockService.ts
 │   │   └── lambda.ts
 │   ├── template.yaml
 │   ├── samconfig.toml
