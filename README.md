@@ -304,17 +304,7 @@ The application is designed to demonstrate the technical workflow rather than re
 
 ---
 
-## 🤖 AI Usage
 
-Amazon Bedrock is used to generate natural-language summaries from structured report information.
-The AI layer is designed to:
-- Receive structured measurements from stored reports.
-- Compare relevant recorded values.
-- Generate a concise plain-language explanation.
-- Avoid unsupported medical conclusions.
-- Avoid diagnosis or treatment recommendations.
-
-AI-assisted coding tools were also used during development.
 
 ---
 ## 📝 Hackathon Submission Summary
@@ -424,7 +414,7 @@ The project was developed during the hackathon period and uses AWS as a core par
 ---
 
 ## 👨‍💻 Author
-
+Divyam
 
 
 ---
