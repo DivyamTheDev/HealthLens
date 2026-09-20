@@ -98,18 +98,28 @@ For example:
 
 This provides a simple historical view of recorded values.
 
-### 🤖 AI-Powered Summaries
-Amazon Bedrock is used to generate plain-language summaries from structured report information.
+## 🤖 AI Usage
 
-The AI is instructed to:
-- Use only the information provided
-- Avoid inventing medical information
-- Avoid diagnosing conditions
-- Avoid prescribing treatment
-- Clearly describe recorded changes
+### Amazon Bedrock
 
-**Example:**
-> *"Compared with the selected previous report, the recorded Vitamin D value changed from 18 to 27 ng/mL, while Hemoglobin changed from 13.2 to 14.0 g/dL."*
+Amazon Bedrock is used to generate natural-language summaries from structured report information.
+
+The AI layer is designed to:
+
+- Receive structured measurements from stored reports
+- Compare relevant recorded values
+- Generate concise plain-language explanations
+- Avoid unsupported medical conclusions
+- Avoid diagnosis or treatment recommendations
+
+### AI-Assisted Development
+
+AI coding and development tools were used during the development of HealthLens:
+
+- **ChatGPT** — used for architecture discussions, AWS setup guidance, debugging, code suggestions, technical explanations, documentation, and deployment troubleshooting.
+- **Antigravity** — used as a coding and development assistant for implementation support, debugging, and development suggestions.
+
+The application was developed iteratively with the developer responsible for the architecture, implementation decisions, integration, testing, deployment, and final project decisions. Antigravity was not used to independently generate the entire application.
 
 ### 🧠 Ask My Reports
 Users can ask questions about their stored report information, such as:
@@ -290,14 +300,7 @@ Example measurements include:
 
 The application is designed to demonstrate the technical workflow rather than replace professional medical evaluation.
 
----
-
-## ⚠️ Disclaimer
-
-HealthLens is an informational software project.
-It is designed to organize, compare, visualize, and summarize information contained in uploaded reports.
-HealthLens does not provide medical diagnosis, treatment recommendations, or professional medical advice.
-Users should consult qualified healthcare professionals for medical decisions.
+--
 
 ---
 
@@ -314,6 +317,14 @@ The AI layer is designed to:
 AI-assisted coding tools were also used during development.
 
 ---
+## 📝 Hackathon Submission Summary
+HealthLens was built during the WeMakeDevs × AWS Bharat Builds Tour 2026 — First Commit to address the difficulty of understanding and comparing information scattered across multiple medical reports.
+
+The application allows users to upload reports, extract and structure recorded measurements, view report information, compare values across reports, track measurements over time, and generate plain-language summaries. The system focuses on organizing and explaining recorded information rather than providing medical diagnosis or treatment advice.
+
+AWS is a core part of the application architecture. AWS Amplify hosts the React frontend, API Gateway exposes the backend API, AWS Lambda runs the application logic, Amazon S3 stores uploaded documents, DynamoDB stores structured report data, and Amazon Bedrock powers AI-generated summaries. The application uses a serverless architecture and is deployed as a live AWS application.
+
+HealthLens was developed as a solo project under the team name DivyamLabs.
 
 ## 🚀 Running Locally
 
