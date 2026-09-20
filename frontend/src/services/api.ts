@@ -7,7 +7,14 @@ import {
   SystemStatus,
 } from '../types/health.js';
 
-const API_BASE = '/api';
+const getApiBase = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return '/api';
+  const cleanUrl = envUrl.replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+};
+
+const API_BASE = getApiBase();
 
 export async function fetchStatus(): Promise<SystemStatus> {
   const res = await fetch(`${API_BASE}/status`);
