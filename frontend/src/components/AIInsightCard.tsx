@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, RefreshCw, ShieldAlert } from 'lucide-react';
+import { MarkdownRenderer } from './MarkdownRenderer.js';
 
 interface AIInsightCardProps {
   summary?: string;
@@ -54,13 +55,7 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
             <p className="text-sm">Synthesizing report comparison with Amazon Bedrock...</p>
           </div>
         ) : summary ? (
-          <div className="prose prose-invert max-w-none text-slate-200 text-sm leading-relaxed space-y-3">
-            {summary.split('\n\n').map((paragraph, i) => (
-              <p key={i} className="whitespace-pre-line">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <MarkdownRenderer content={summary} theme="dark" />
         ) : (
           <p className="text-sm text-slate-400 italic py-4">
             Click &quot;Generate Summary&quot; to produce an AI-powered comparison of these reports.

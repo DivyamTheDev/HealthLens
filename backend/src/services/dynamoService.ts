@@ -4,6 +4,7 @@ import {
   PutCommand,
   GetCommand,
   QueryCommand,
+  ScanCommand,
   DeleteCommand,
 } from '@aws-sdk/lib-dynamodb';
 import fs from 'fs';
@@ -154,20 +155,18 @@ export class DynamoService {
 
     if (this.isLiveMode && this.docClient) {
       try {
-        // Query by id using scan or query depending on PK
         const response = await this.docClient.send(
-          new QueryCommand({
+          new ScanCommand({
             TableName: this.reportsTable,
-            IndexName: 'ReportIdIndex',
-            KeyConditionExpression: 'id = :rid',
+            FilterExpression: 'id = :rid',
             ExpressionAttributeValues: { ':rid': reportId },
           })
         );
         if (response.Items && response.Items.length > 0) {
           reportMetadata = response.Items[0] as ReportMetadata;
         }
-      } catch {
-        // Fallback to local
+      } catch (err) {
+        console.warn('[DynamoService] Scan in getReport failed, trying local fallback:', err);
       }
     }
 

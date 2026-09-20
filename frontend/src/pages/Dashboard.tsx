@@ -205,10 +205,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Compare Card */}
         <div
           onClick={handleQuickCompare}
-          className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group"
+          className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between h-full"
         >
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-amber-50 rounded-xl text-amber-600 group-hover:scale-105 transition-transform">
+            <div className="p-3 bg-amber-50 rounded-xl text-amber-600 group-hover:scale-105 transition-transform shrink-0">
               <GitCompare className="w-6 h-6" />
             </div>
             <div>
@@ -228,10 +228,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Timeline Card */}
         <div
           onClick={() => onNavigate('timeline')}
-          className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group"
+          className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between h-full"
         >
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-teal-50 rounded-xl text-teal-600 group-hover:scale-105 transition-transform">
+            <div className="p-3 bg-teal-50 rounded-xl text-teal-600 group-hover:scale-105 transition-transform shrink-0">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>

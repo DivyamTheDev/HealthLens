@@ -11,6 +11,7 @@ import {
   Layers,
   HelpCircle,
 } from 'lucide-react';
+import { MarkdownRenderer } from '../components/MarkdownRenderer.js';
 
 interface ChatMessage {
   id: string;
@@ -142,7 +143,11 @@ export const AskReports: React.FC = () => {
                       : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
                   }`}
                 >
-                  <p className="whitespace-pre-line">{msg.text}</p>
+                  {isUser ? (
+                    <p className="whitespace-pre-line">{msg.text}</p>
+                  ) : (
+                    <MarkdownRenderer content={msg.text} theme="light" />
+                  )}
 
                   {/* Citations block for AI answers */}
                   {!isUser && (msg.relevantReports?.length || msg.referencedBiomarkers?.length) ? (
