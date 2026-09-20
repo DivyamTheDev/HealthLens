@@ -24,26 +24,34 @@ export class DynamoService {
     this.reportsTable = process.env.DYNAMODB_REPORTS_TABLE || 'HealthLensReports';
     this.measurementsTable = process.env.DYNAMODB_MEASUREMENTS_TABLE || 'HealthLensMeasurements';
 
+    const isLambda = Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
     const hasAwsKeys = Boolean(
-      process.env.AWS_ACCESS_KEY_ID &&
-      process.env.AWS_SECRET_ACCESS_KEY &&
-      process.env.AWS_REGION
+      (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) ||
+      isLambda ||
+      process.env.AWS_MODE === 'live'
     );
     const forceAuto = process.env.AWS_MODE !== 'mock';
-    this.isLiveMode = hasAwsKeys && forceAuto;
+    this.isLiveMode = (hasAwsKeys || isLambda) && forceAuto;
 
-    this.localDbDir = path.resolve(process.cwd(), 'data', 'dynamo_db');
+    const baseDir = isLambda ? '/tmp' : process.cwd();
+    this.localDbDir = path.resolve(baseDir, 'data', 'dynamo_db');
     this.reportsFile = path.join(this.localDbDir, 'reports.json');
     this.measurementsFile = path.join(this.localDbDir, 'measurements.json');
 
     if (this.isLiveMode) {
-      const client = new DynamoDBClient({
-        region: process.env.AWS_REGION || 'us-east-1',
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        },
-      });
+      const clientConfig: any = {
+        region: process.env.AWS_REGION || 'ap-south-1',
+      };
+      if (!isLambda && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        clientConfig.credentials = {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        };
+        if (process.env.AWS_SESSION_TOKEN) {
+          clientConfig.credentials.sessionToken = process.env.AWS_SESSION_TOKEN;
+        }
+      }
+      const client = new DynamoDBClient(clientConfig);
       this.docClient = DynamoDBDocumentClient.from(client, {
         marshallOptions: { removeUndefinedValues: true },
       });

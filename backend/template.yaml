@@ -105,10 +105,15 @@ Resources:
                 - bedrock:InvokeModel
               Resource: '*'
       Events:
-        ApiRoot:
+        ApiProxy:
           Type: Api
           Properties:
             Path: /api/{proxy+}
+            Method: ANY
+        ApiRoot:
+          Type: Api
+          Properties:
+            Path: /api
             Method: ANY
 
 Outputs:

@@ -11,24 +11,32 @@ export class S3Service {
 
   constructor() {
     this.bucketName = process.env.S3_BUCKET_NAME || 'healthlens-reports-bucket';
+    const isLambda = Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
     const hasAwsKeys = Boolean(
-      process.env.AWS_ACCESS_KEY_ID &&
-      process.env.AWS_SECRET_ACCESS_KEY &&
-      process.env.AWS_REGION
+      (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) ||
+      isLambda ||
+      process.env.AWS_MODE === 'live'
     );
     const forceAuto = process.env.AWS_MODE !== 'mock';
-    this.isLiveMode = hasAwsKeys && forceAuto;
+    this.isLiveMode = (hasAwsKeys || isLambda) && forceAuto;
 
-    this.localStorageDir = path.resolve(process.cwd(), 'data', 's3_storage');
+    const baseDir = isLambda ? '/tmp' : process.cwd();
+    this.localStorageDir = path.resolve(baseDir, 'data', 's3_storage');
 
     if (this.isLiveMode) {
-      this.client = new S3Client({
-        region: process.env.AWS_REGION || 'us-east-1',
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        },
-      });
+      const clientConfig: any = {
+        region: process.env.AWS_REGION || 'ap-south-1',
+      };
+      if (!isLambda && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        clientConfig.credentials = {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        };
+        if (process.env.AWS_SESSION_TOKEN) {
+          clientConfig.credentials.sessionToken = process.env.AWS_SESSION_TOKEN;
+        }
+      }
+      this.client = new S3Client(clientConfig);
       console.log(`[S3Service] Initialized in AWS LIVE mode (Bucket: ${this.bucketName})`);
     } else {
       if (!fs.existsSync(this.localStorageDir)) {

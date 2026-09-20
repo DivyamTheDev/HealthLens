@@ -4,7 +4,7 @@
   "description": "HealthLens - AWS Lambda & API Gateway backend for medical report analytics",
   "main": "dist/lambda.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs=require('fs'); fs.copyFileSync('package.json','dist/package.json'); fs.copyFileSync('package-lock.json','dist/package-lock.json');\"",
     "dev": "tsx watch src/devServer.ts",
     "start": "tsx src/devServer.ts",
     "generate-samples": "tsx src/scripts/generateSamples.ts"

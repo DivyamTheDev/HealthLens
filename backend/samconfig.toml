@@ -1,0 +1,23 @@
+# More information about the configuration file can be found here:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-samcli-config.html
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "healthlens"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+resolve_s3 = true
+stack_name = "healthlens"
+s3_prefix = "healthlens"
+region = "ap-south-1"
+disable_rollback = false

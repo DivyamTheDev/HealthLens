@@ -5,6 +5,7 @@ import { handleGenerateSummary } from './handlers/generateSummary.js';
 import { handleGetTimeline } from './handlers/getTimeline.js';
 import { handleAskReports } from './handlers/askReports.js';
 import { handleUploadReport } from './handlers/uploadReport.js';
+import { seedDemoData } from './handlers/seedDemoData.js';
 import { successResponse, errorResponse } from './utils/response.js';
 
 export interface LambdaEvent {
@@ -38,6 +39,26 @@ export const handler = async (event: LambdaEvent) => {
       } catch {
         body = {};
       }
+    }
+
+    // 0. GET /api/status or /api
+    if (method === 'GET' && (path === '/api/status' || path === '/api' || path === '/')) {
+      return successResponse({
+        status: 'online',
+        timestamp: new Date().toISOString(),
+        mode: {
+          s3: 'AWS Live',
+          dynamodb: 'AWS Live',
+          bedrock: 'AWS Live',
+          activeAwsMode: 'Live AWS',
+        },
+        awsConfig: {
+          region: process.env.AWS_REGION || 'ap-south-1',
+          hasAccessKey: true,
+          bedrockModel: process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-haiku-20240307-v1:0',
+          s3Bucket: process.env.S3_BUCKET_NAME || 'healthlens-reports-bucket',
+        },
+      });
     }
 
     // 1. GET /api/reports
@@ -109,6 +130,12 @@ export const handler = async (event: LambdaEvent) => {
         userId
       );
       return successResponse(report, 201);
+    }
+
+    // 8. POST /api/demo/seed
+    if (method === 'POST' && path === '/api/demo/seed') {
+      const result = await seedDemoData(body.userId || 'demo-user-123');
+      return successResponse(result);
     }
 
     return errorResponse(`Route not found: ${method} ${path}`, 404);
