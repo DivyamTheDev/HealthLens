@@ -28,7 +28,17 @@ export const handler = async (event: LambdaEvent) => {
     const path = event.path;
     const method = event.httpMethod;
     const query = event.queryStringParameters || {};
-    const body = event.body ? JSON.parse(event.body) : {};
+    let body: any = {};
+    if (event.body) {
+      try {
+        const decodedBody = event.isBase64Encoded
+          ? Buffer.from(event.body, 'base64').toString('utf-8')
+          : event.body;
+        body = JSON.parse(decodedBody);
+      } catch {
+        body = {};
+      }
+    }
 
     // 1. GET /api/reports
     if (method === 'GET' && path === '/api/reports') {
@@ -77,12 +87,26 @@ export const handler = async (event: LambdaEvent) => {
 
     // 7. POST /api/reports/upload (base64 payload)
     if (method === 'POST' && path === '/api/reports/upload') {
-      const fileBuffer = Buffer.from(body.fileBase64, 'base64');
+      let fileBuffer: Buffer | null = null;
+      const fileName = body.fileName || 'report.pdf';
+      const contentType = body.contentType || 'application/pdf';
+      const userId = body.userId || 'demo-user-123';
+
+      if (body.fileBase64) {
+        fileBuffer = Buffer.from(body.fileBase64, 'base64');
+      } else if (event.isBase64Encoded && event.body) {
+        fileBuffer = Buffer.from(event.body, 'base64');
+      }
+
+      if (!fileBuffer) {
+        return errorResponse('Missing fileBase64 in request body', 400);
+      }
+
       const report = await handleUploadReport(
         fileBuffer,
-        body.fileName || 'report.pdf',
-        body.contentType || 'application/pdf',
-        body.userId || 'demo-user-123'
+        fileName,
+        contentType,
+        userId
       );
       return successResponse(report, 201);
     }

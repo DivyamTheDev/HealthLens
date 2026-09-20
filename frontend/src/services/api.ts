@@ -28,13 +28,32 @@ export async function fetchReport(reportId: string): Promise<ReportDetail> {
 }
 
 export async function uploadReport(file: File, userId = 'demo-user-123'): Promise<ReportDetail> {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('userId', userId);
+  // Convert file to Base64 to ensure 100% compatibility across both AWS Lambda/SAM and local development
+  const toBase64 = (f: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(f);
+      reader.onload = () => {
+        const res = reader.result as string;
+        const base64 = res.includes(',') ? res.split(',')[1] : res;
+        resolve(base64);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+
+  const fileBase64 = await toBase64(file);
 
   const res = await fetch(`${API_BASE}/reports/upload`, {
     method: 'POST',
-    body: formData,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fileBase64,
+      fileName: file.name,
+      contentType: file.type || 'application/pdf',
+      userId,
+    }),
   });
 
   if (!res.ok) {

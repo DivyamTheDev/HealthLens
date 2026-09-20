@@ -18,7 +18,8 @@ const app = express();
 const port = parseInt(process.env.PORT || '5001', 10);
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -45,18 +46,30 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Upload Report
+// Upload Report (supports both JSON Base64 for Lambda parity and multipart/form-data)
 app.post('/api/reports/upload', upload.single('file'), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+    let fileBuffer: Buffer;
+    let fileName = 'report.pdf';
+    let contentType = 'application/pdf';
+    let userId = (req.body?.userId as string) || 'demo-user-123';
+
+    if (req.file) {
+      fileBuffer = req.file.buffer;
+      fileName = req.file.originalname;
+      contentType = req.file.mimetype;
+    } else if (req.body && req.body.fileBase64) {
+      fileBuffer = Buffer.from(req.body.fileBase64, 'base64');
+      fileName = req.body.fileName || fileName;
+      contentType = req.body.contentType || contentType;
+    } else {
+      return res.status(400).json({ error: 'No file uploaded (expected file form-data or fileBase64 JSON)' });
     }
 
-    const userId = (req.body.userId as string) || 'demo-user-123';
     const report = await handleUploadReport(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype,
+      fileBuffer,
+      fileName,
+      contentType,
       userId
     );
 
