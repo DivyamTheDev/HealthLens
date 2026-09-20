@@ -12,14 +12,6 @@ Instead of manually comparing multiple reports, HealthLens extracts recorded mea
 > ⚠️ **Disclaimer**: HealthLens is an informational tool and does not provide medical diagnosis or treatment advice.
 
 ---
-
-## 🚀 Live Demo
-
-* **Live Application URL**: [https://main.d1sg7hnevaweuu.amplifyapp.com/](https://main.d1sg7hnevaweuu.amplifyapp.com/)
-* **GitHub Repository**: [https://github.com/DivyamTheDev/HealthLens](https://github.com/DivyamTheDev/HealthLens)
-
-👉 **Experience the live deployed application**: **[https://main.d1sg7hnevaweuu.amplifyapp.com/](https://main.d1sg7hnevaweuu.amplifyapp.com/)**
-
 ---
 
 ## 💡 The Problem
@@ -422,8 +414,7 @@ The project was developed during the hackathon period and uses AWS as a core par
 
 ## 👨‍💻 Author
 
-**Divyam Chaudhary**
-- GitHub: [https://github.com/DivyamTheDev](https://github.com/DivyamTheDev)
+
 
 ---
 
